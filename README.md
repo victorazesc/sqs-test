@@ -1,0 +1,66 @@
+# nestjs-sqs-sample
+
+## 概要
+
+- NestJS + AWS SQSのサンプルプロジェクトです。
+- localstackのSQSを使用して動作確認をします。
+
+## 動作環境
+
+- Mac OS
+- Node.js - 16.x
+- yarn - 1.22.x
+- Docker Desktop - 4.2.0以上
+- AWS CLI - 2.2.x
+
+## 使用ライブラリ
+
+- nestjs - 8.x
+- @ssut/nestjs-sqs - 1.2.x
+
+## 動作確認
+
+```bash
+# SQS起動（起動時にSQSにsample-queueを作成します）
+docker-compose up -d
+
+# Node.jsパッケージインストール
+yarn
+
+# .envファイル作成。必要に応じて.envの内容は変更してください
+cp .env.sample .env
+
+# SQS受信側起動
+yarn start:consumer
+
+# SQS送信側起動
+yarn start:producer
+
+# SQS送信側のエンドポイントを叩く
+curl 'http://localhost:3000/?message=hogeee'
+```
+
+### 動作確認 - Dockerビルド後に実行
+
+```bash
+# SQS起動（起動時にSQSにsample-queueを作成します）
+docker-compose up -d
+
+# sqs-producer/sqs-consumerをDockerイメージにビルド
+docker-compose -f docker-compose.dev.yml build
+
+# sqs-producer/sqs-consumerを起動。
+docker-compose -f docker-compose.dev.yml up
+
+# SQS送信側のエンドポイントを叩く
+curl 'http://localhost:3000/?message=hogeee'
+```
+
+
+## 参考URL
+
+- https://docs.nestjs.com/cli/monorepo
+- https://www.npmjs.com/package/@ssut/nestjs-sqs
+- https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/getting-started-install.html
+- https://github.com/localstack/localstack
+
