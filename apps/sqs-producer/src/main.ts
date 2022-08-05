@@ -3,9 +3,10 @@ import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
 import { SqsProducerModule } from "./sqs-producer.module";
 import * as AWS from "aws-sdk";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { join } from "path";
 
 async function bootstrap() {
-  // Criar um objeto de serviço SQS no endpoint elasticmq
   var config = {
     endpoint: new AWS.Endpoint("http://localhost:4566"),
     accessKeyId: "na",
@@ -32,10 +33,14 @@ async function bootstrap() {
     }
   );
   
-  const app = await NestFactory.create(SqsProducerModule);
+  const app = await NestFactory.create<NestExpressApplication>(SqsProducerModule)
   const configService = app.get(ConfigService);
   const port = configService.get<string>("PORT") || 3000;
   Logger.log(`listen port: ${port}`, "bootstrap");
+
+  app.useStaticAssets(join(__dirname, '..', 'public'))
+  app.setBaseViewsDir(join(__dirname, '..', 'views'))
+  app.setViewEngine('handlebars')
   await app.listen(port);
 }
 bootstrap();
